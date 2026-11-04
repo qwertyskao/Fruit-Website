@@ -1,31 +1,83 @@
+const mongoose = require('mongoose');
 const Order = require('../models/Order');
+const Product = require('../models/Product');
 const sendEmail = require('../utils/sendMail');
+
+// Phí vận chuyển: miễn phí từ 300.000đ, dưới mức này là 30.000đ.
+const FREE_SHIPPING_THRESHOLD = 300000;
+const STANDARD_SHIPPING_FEE = 30000;
 
 // @desc    Tạo đơn hàng mới & Gửi email xác nhận
 // @route   POST /api/orders
 // @access  Public (hoặc Private nếu có token)
 const createOrder = async (req, res, next) => {
   try {
-    const {
-      orderItems,
+    const { orderItems: requestedItems, shippingAddress, paymentMethod } = req.body;
+
+    if (!Array.isArray(requestedItems) || requestedItems.length === 0) {
+      return res.status(400).json({ success: false, message: 'Giỏ hàng trống hoặc không hợp lệ' });
+    }
+
+    // Chỉ nhận ID sản phẩm và số lượng. Không sử dụng giá/tên/tổng tiền từ client.
+    const normalizedItems = [];
+    for (const item of requestedItems) {
+      const productId = item?.product || item?.productId;
+      const qty = Number(item?.qty);
+
+      if (!mongoose.Types.ObjectId.isValid(productId)) {
+        return res.status(400).json({ success: false, message: 'ID sản phẩm không hợp lệ' });
+      }
+
+      if (!Number.isSafeInteger(qty) || qty <= 0) {
+        return res.status(400).json({ success: false, message: 'Số lượng sản phẩm phải là số nguyên dương' });
+      }
+
+      normalizedItems.push({ productId, qty });
+    }
+
+    const productIds = [...new Set(normalizedItems.map((item) => item.productId))];
+    const products = await Product.find({ _id: { $in: productIds } });
+    const productsById = new Map(products.map((product) => [product._id.toString(), product]));
+
+    const missingProduct = productIds.find((id) => !productsById.has(id.toString()));
+    if (missingProduct) {
+      return res.status(400).json({ success: false, message: 'Một hoặc nhiều sản phẩm không tồn tại' });
+    }
+
+    const calculatedOrderItems = normalizedItems.map(({ productId, qty }) => {
+      const product = productsById.get(productId.toString());
+      const unitPrice = product.discountPrice > 0 ? product.discountPrice : product.price;
+
+      if (!Number.isFinite(unitPrice) || unitPrice < 0) {
+        throw new Error(`Giá sản phẩm không hợp lệ: ${product.name}`);
+      }
+
+      return {
+        product: product._id,
+        name: product.name,
+        qty,
+        price: unitPrice,
+        image: product.images?.[0] || '',
+      };
+    });
+
+    const itemsPrice = calculatedOrderItems.reduce(
+      (sum, item) => sum + item.price * item.qty,
+      0
+    );
+    const shippingPrice =
+      itemsPrice === 0 || itemsPrice >= FREE_SHIPPING_THRESHOLD
+        ? 0
+        : STANDARD_SHIPPING_FEE;
+    const totalPrice = itemsPrice + shippingPrice;
+
+    const order = new Order({
+      user: req.user ? req.user._id : null,
+      orderItems: calculatedOrderItems,
       shippingAddress,
       paymentMethod,
       itemsPrice,
       shippingPrice,
-      totalPrice,
-    } = req.body;
-
-    if (!orderItems || orderItems.length === 0) {
-      return res.status(400).json({ success: false, message: 'Giỏ hàng trống' });
-    }
-
-    const order = new Order({
-      user: req.user ? req.user._id : null,
-      orderItems,
-      shippingAddress,
-      paymentMethod,
-      itemsPrice: itemsPrice || 0,
-      shippingPrice: shippingPrice || 0,
       totalPrice,
     });
 
@@ -34,7 +86,7 @@ const createOrder = async (req, res, next) => {
     // Tự động gửi email xác nhận đặt hàng nếu người mua có email
     if (shippingAddress && shippingAddress.email) {
       try {
-        const itemsHtml = orderItems
+        const itemsHtml = calculatedOrderItems
           .map(
             (item) =>
               `<tr>

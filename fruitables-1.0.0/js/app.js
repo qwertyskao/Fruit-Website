@@ -479,12 +479,13 @@ const app = {
       }
 
       const orderPayload = {
-        orderItems: cart,
+        // Chỉ gửi ID sản phẩm và số lượng. Giá/tổng tiền do Backend tự tính.
+        orderItems: cart.map((item) => ({
+          product: item.product,
+          qty: Number(item.qty),
+        })),
         shippingAddress: { fullName, phone, email, address, city, note },
         paymentMethod: paymentMethod === 'Banking' ? 'Banking' : 'COD',
-        itemsPrice,
-        shippingPrice,
-        totalPrice,
       };
 
       const btnSubmit = document.getElementById('btn-place-order');
@@ -507,7 +508,7 @@ const app = {
         const json = await res.json();
         if (json.success && json.data) {
           app.clearCart();
-          alert(`🎉 ĐẶT HÀNG THÀNH CÔNG!\n\nMã đơn hàng của bạn: #${json.data._id}\nTổng thanh toán: ${totalPrice.toLocaleString('vi-VN')} đ\n\nEmail xác nhận chi tiết đã được gửi tới: ${email}`);
+          alert(`🎉 ĐẶT HÀNG THÀNH CÔNG!\n\nMã đơn hàng của bạn: #${json.data._id}\nTổng thanh toán: ${json.data.totalPrice.toLocaleString('vi-VN')} đ\n\nEmail xác nhận chi tiết đã được gửi tới: ${email}`);
           window.location.href = 'index.html';
         } else {
           alert('❌ Có lỗi xảy ra khi tạo đơn hàng: ' + (json.message || 'Vui lòng thử lại'));
