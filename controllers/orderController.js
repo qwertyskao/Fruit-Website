@@ -3,6 +3,7 @@ const Order = require('../models/Order');
 const Product = require('../models/Product');
 const sendEmail = require('../utils/sendMail');
 const { escapeHtml } = require('../utils/sanitize');
+const { isNonEmptyString, isValidEmail } = require('../utils/validation');
 
 // Phí vận chuyển: miễn phí từ 300.000đ, dưới mức này là 30.000đ.
 const FREE_SHIPPING_THRESHOLD = 300000;
@@ -39,6 +40,20 @@ const createOrder = async (req, res, next) => {
 
     if (!Array.isArray(requestedItems) || requestedItems.length === 0) {
       return res.status(400).json({ success: false, message: 'Giỏ hàng trống hoặc không hợp lệ' });
+    }
+
+    if (!shippingAddress || typeof shippingAddress !== 'object' || Array.isArray(shippingAddress)) {
+      return res.status(400).json({ success: false, message: 'Thông tin giao hàng không hợp lệ' });
+    }
+    if (!isNonEmptyString(shippingAddress.fullName)) {
+      return res.status(400).json({ success: false, message: 'Tên người nhận không được để trống' });
+    }
+    if (!isValidEmail(shippingAddress.email)) {
+      return res.status(400).json({ success: false, message: 'Email người nhận không đúng định dạng' });
+    }
+    shippingAddress.email = shippingAddress.email.trim().toLowerCase();
+    if (!isNonEmptyString(shippingAddress.phone) || !isNonEmptyString(shippingAddress.address)) {
+      return res.status(400).json({ success: false, message: 'Vui lòng nhập số điện thoại và địa chỉ giao hàng' });
     }
 
     // Chỉ nhận ID sản phẩm và số lượng. Không sử dụng giá/tên/tổng tiền từ client.

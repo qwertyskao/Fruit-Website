@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { isNonEmptyString, isValidEmail } = require('../utils/validation');
 
 // Hàm tạo JWT token
 const generateToken = (id) => {
@@ -15,8 +16,20 @@ const registerUser = async (req, res, next) => {
   try {
     const { name, email, password, phone, address } = req.body;
 
+    if (!isNonEmptyString(name)) {
+      return res.status(400).json({ success: false, message: 'Họ tên không được để trống' });
+    }
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ success: false, message: 'Email không đúng định dạng' });
+    }
+    if (typeof password !== 'string' || password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Mật khẩu phải có ít nhất 6 ký tự' });
+    }
+
+    const normalizedEmail = email.trim().toLowerCase();
+
     // Kiểm tra email tồn tại chưa
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ email: normalizedEmail });
     if (userExists) {
       return res.status(400).json({ success: false, message: 'Email này đã được sử dụng' });
     }
@@ -24,7 +37,7 @@ const registerUser = async (req, res, next) => {
     // Tạo user mới
     const user = await User.create({
       name,
-      email,
+      email: normalizedEmail,
       password,
       phone,
       address,
@@ -53,11 +66,14 @@ const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ success: false, message: 'Email không đúng định dạng' });
+    }
+    if (typeof password !== 'string' || !password) {
       return res.status(400).json({ success: false, message: 'Vui lòng cung cấp email và mật khẩu' });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.trim().toLowerCase() });
     if (user && (await user.matchPassword(password))) {
       res.json({
         success: true,

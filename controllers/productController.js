@@ -1,5 +1,6 @@
 const Product = require('../models/Product');
 const { escapeRegex } = require('../utils/sanitize');
+const { isNonEmptyString, isNonNegativeNumber } = require('../utils/validation');
 
 // @desc    Lấy danh sách sản phẩm (hỗ trợ tìm kiếm, lọc theo danh mục)
 // @route   GET /api/products
@@ -130,6 +131,16 @@ const createProduct = async (req, res, next) => {
   try {
     const { name, category, price, discountPrice, description, unit, countInStock, isFeatured } = req.body;
 
+    if (!isNonEmptyString(name)) {
+      return res.status(400).json({ success: false, message: 'Tên sản phẩm không được để trống' });
+    }
+    if (!isNonNegativeNumber(price)) {
+      return res.status(400).json({ success: false, message: 'Giá sản phẩm phải là số hợp lệ và không âm' });
+    }
+    if (discountPrice !== undefined && !isNonNegativeNumber(discountPrice)) {
+      return res.status(400).json({ success: false, message: 'Giá khuyến mãi phải là số hợp lệ và không âm' });
+    }
+
     let images = [];
     if (req.files && req.files.length > 0) {
       images = req.files.map((file) => `/uploads/${file.filename}`);
@@ -170,6 +181,16 @@ const createProduct = async (req, res, next) => {
 // @access  Private/Admin
 const updateProduct = async (req, res, next) => {
   try {
+    if (req.body.name !== undefined && !isNonEmptyString(req.body.name)) {
+      return res.status(400).json({ success: false, message: 'Tên sản phẩm không được để trống' });
+    }
+    if (req.body.price !== undefined && !isNonNegativeNumber(req.body.price)) {
+      return res.status(400).json({ success: false, message: 'Giá sản phẩm phải là số hợp lệ và không âm' });
+    }
+    if (req.body.discountPrice !== undefined && !isNonNegativeNumber(req.body.discountPrice)) {
+      return res.status(400).json({ success: false, message: 'Giá khuyến mãi phải là số hợp lệ và không âm' });
+    }
+
     let product = await Product.findById(req.params.id);
     if (!product) {
       return res.status(404).json({ success: false, message: 'Không tìm thấy sản phẩm' });
