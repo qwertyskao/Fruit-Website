@@ -21,9 +21,15 @@ const orderSchema = new mongoose.Schema(
       },
     ],
     shippingAddress: {
-      fullName: { type: String, required: true },
+      fullName: { type: String, required: true, trim: true },
       phone: { type: String, required: true },
-      email: { type: String, required: true },
+      email: {
+        type: String,
+        required: true,
+        trim: true,
+        lowercase: true,
+        match: [/^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/, 'Email không đúng định dạng'],
+      },
       address: { type: String, required: true },
       city: { type: String, default: '' },
       note: { type: String, default: '' },
