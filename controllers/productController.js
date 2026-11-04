@@ -1,4 +1,5 @@
 const Product = require('../models/Product');
+const { escapeRegex } = require('../utils/sanitize');
 
 // @desc    Lấy danh sách sản phẩm (hỗ trợ tìm kiếm, lọc theo danh mục)
 // @route   GET /api/products
@@ -8,8 +9,19 @@ const getProducts = async (req, res, next) => {
     const { keyword, category, featured } = req.query;
     let query = {};
 
-    if (keyword) {
-      query.name = { $regex: keyword, $options: 'i' };
+    if (keyword !== undefined) {
+      if (typeof keyword !== 'string') {
+        return res.status(400).json({ success: false, message: 'Từ khóa tìm kiếm không hợp lệ' });
+      }
+
+      const normalizedKeyword = keyword.trim();
+      if (normalizedKeyword.length > 100) {
+        return res.status(400).json({ success: false, message: 'Từ khóa tìm kiếm không được vượt quá 100 ký tự' });
+      }
+
+      if (normalizedKeyword) {
+        query.name = { $regex: escapeRegex(normalizedKeyword), $options: 'i' };
+      }
     }
     if (category) {
       query.category = category;

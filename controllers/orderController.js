@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const sendEmail = require('../utils/sendMail');
+const { escapeHtml } = require('../utils/sanitize');
 
 // Phí vận chuyển: miễn phí từ 300.000đ, dưới mức này là 30.000đ.
 const FREE_SHIPPING_THRESHOLD = 300000;
@@ -154,7 +155,7 @@ const createOrder = async (req, res, next) => {
           .map(
             (item) =>
               `<tr>
-                <td style="padding: 8px; border: 1px solid #ddd;">${item.name}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">${escapeHtml(item.name)}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${item.qty}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${item.price.toLocaleString('vi-VN')} đ</td>
               </tr>`
@@ -164,8 +165,8 @@ const createOrder = async (req, res, next) => {
         const emailContent = `
           <h2>Cảm ơn bạn đã đặt hàng tại Fruitables!</h2>
           <p>Mã đơn hàng của bạn: <strong>#${createdOrder._id}</strong></p>
-          <p>Người nhận: ${shippingAddress.fullName} - SĐT: ${shippingAddress.phone}</p>
-          <p>Địa chỉ giao hàng: ${shippingAddress.address}, ${shippingAddress.city || ''}</p>
+          <p>Người nhận: ${escapeHtml(shippingAddress.fullName)} - SĐT: ${escapeHtml(shippingAddress.phone)}</p>
+          <p>Địa chỉ giao hàng: ${escapeHtml(shippingAddress.address)}, ${escapeHtml(shippingAddress.city || '')}</p>
           <h3>Chi tiết đơn hàng:</h3>
           <table style="width: 100%; border-collapse: collapse;">
             <thead>
@@ -180,7 +181,7 @@ const createOrder = async (req, res, next) => {
             </tbody>
           </table>
           <p style="margin-top: 15px; font-size: 16px;"><strong>Tổng thanh toán: ${totalPrice.toLocaleString('vi-VN')} đ</strong></p>
-          <p>Phương thức thanh toán: <strong>${paymentMethod}</strong></p>
+          <p>Phương thức thanh toán: <strong>${escapeHtml(paymentMethod)}</strong></p>
           <br>
           <p>Chúng tôi sẽ liên hệ để xác nhận và giao hàng sớm nhất!</p>
         `;
