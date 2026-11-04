@@ -7,8 +7,9 @@ const isValidEmail = (value) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(value.trim());
 
 const isNonNegativeNumber = (value) => {
-  if (typeof value === 'string' && value.trim() === '') return false;
-  const number = typeof value === 'number' ? value : Number(value);
+  if (typeof value === 'number') return Number.isFinite(value) && value >= 0;
+  if (typeof value !== 'string' || value.trim() === '') return false;
+  const number = Number(value);
   return Number.isFinite(number) && number >= 0;
 };
 
