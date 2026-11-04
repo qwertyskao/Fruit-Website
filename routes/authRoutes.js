@@ -4,11 +4,13 @@ const {
   registerUser,
   loginUser,
   getUserProfile,
+  changePassword,
 } = require('../controllers/authController');
 const { protect } = require('../middlewares/authMiddleware');
 
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.get('/profile', protect, getUserProfile);
+router.put('/change-password', protect, changePassword);
 
 module.exports = router;
