@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Đơn hàng - Fruitables Admin</title>
+
+  <!-- SEO Optimization -->
+  <meta name="description" content="Quản lý Đơn đặt hàng Nông sản - Fruitables Admin">
+  <meta name="author" content="Fruitables Việt Nam">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/favicon.ico">
+
+  <!-- Local Third-Party Libraries (100% Offline Compatible) -->
+  <link rel="stylesheet" href="assets/libs/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-icons/bootstrap-icons.css">
+  <link rel="stylesheet" href="assets/libs/apexcharts/apexcharts.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+
+  <!-- Main Design System & Custom Stylesheet -->
+  <link rel="stylesheet" href="assets/css/main.css">
+
+  <!-- Theme Auto-detection Script -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('fruitables_theme') === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+
+<body>
+
+  <!-- ==========================================
+       START: Sidebar Component
+       Highly polished, dark-green navigation
+       ========================================== -->
+  <div class="sidebar-wrapper" id="sidebar">
+    <!-- Brand Logo / Identity -->
+    <div class="sidebar-brand">
+      <i class="bi bi-basket2-fill text-lime"></i>
+      <span>Fruitables Admin</span>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="flex-grow-1 overflow-y-auto">
+      <!-- Group: Quản lý Cửa hàng -->
+      <div class="sidebar-menu-section">
+        <div class="sidebar-menu-title">Quản lý Cửa hàng</div>
+        <ul class="sidebar-menu-list">
+          <li class="sidebar-menu-item">
+            <a href="index.html" class="sidebar-menu-link" id="menu-overview" title="Bảng điều khiển">
+              <i class="bi bi-grid-fill"></i>
+              <span>Bảng điều khiển</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="tables-basic.html" class="sidebar-menu-link" id="menu-products" title="Quản lý Nông sản">
+              <i class="bi bi-basket2-fill"></i>
+              <span>Quản lý Nông sản</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="orders.html" class="sidebar-menu-link active" id="menu-orders" title="Quản lý Đơn hàng">
+              <i class="bi bi-receipt"></i>
+              <span>Quản lý Đơn hàng</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Group: Hệ thống & Cửa hàng -->
+      <div class="sidebar-menu-section">
+        <div class="sidebar-menu-title">Hệ thống & Cửa hàng</div>
+        <ul class="sidebar-menu-list">
+          <li class="sidebar-menu-item">
+            <a href="/client/index.html" target="_blank" class="sidebar-menu-link" id="menu-viewstore" title="Xem Cửa hàng Khách">
+              <i class="bi bi-shop"></i>
+              <span>Xem Cửa hàng Khách</span>
+              <i class="bi bi-box-arrow-up-right ms-auto text-muted small"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Sidebar Hồ sơ Card (Dynamic Footer) -->
+    <div class="sidebar-profile">
+      <img src="assets/images/avatar.png" alt="Administrator" class="sidebar-profile-img"
+        onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop'">
+      <div class="sidebar-profile-info">
+        <span class="sidebar-profile-name admin-display-name">Quản trị viên</span>
+        <span class="sidebar-profile-role admin-display-email">admin@fruitables.com</span>
+      </div>
+      <button class="sidebar-profile-action btn-admin-logout" type="button" title="Đăng xuất" aria-label="Đăng xuất">
+        <i class="bi bi-box-arrow-right"></i>
+      </button>
+    </div>
+  </div>
+  <!-- END: Sidebar Component -->
+
+  <!-- ==========================================
+       START: Main Layout Content Area
+       ========================================== -->
+  <div class="main-wrapper">
+
+    <!-- START: Top Navbar Component -->
+    <header class="navbar-custom">
+      <div class="navbar-left">
+        <!-- Desktop sidebar toggle (visible on large screens only) -->
+        <button class="btn-desktop-toggle d-none d-xl-flex align-items-center justify-content-center me-3"
+          id="desktop-sidebar-toggle" aria-label="Thu gọn Menu" title="Thu gọn / Mở rộng Menu">
+          <i class="bi bi-chevron-bar-left"></i>
+        </button>
+        <!-- Mobile sidebar toggle -->
+        <button class="sidebar-toggle-btn me-2" id="sidebar-toggle" aria-label="Mở Menu điều hướng">
+          <i class="bi bi-list"></i>
+        </button>
+      </div>
+
+      <!-- Mid navbar: search pill -->
+      <div class="navbar-search-wrapper">
+        <input type="text" class="navbar-search-input" placeholder="Tìm kiếm nhanh đơn hàng..." id="quick-order-search"
+          oninput="const s=document.getElementById('admin-order-search'); if(s){s.value=this.value; s.dispatchEvent(new Event('input'));}">
+        <button class="navbar-search-btn" aria-label="Tìm kiếm">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+
+      <!-- Right side: Notifications, Theme Switcher & Profile -->
+      <div class="navbar-actions">
+        <!-- Theme Toggle -->
+        <button type="button" class="navbar-action-btn me-1" id="btn-theme-toggle" title="Đổi giao diện Tối / Sáng" aria-label="Đổi giao diện Tối / Sáng">
+          <i class="bi bi-moon-stars"></i>
+        </button>
+
+        <!-- Fullscreen Toggle -->
+        <button class="navbar-action-btn d-none d-sm-inline-flex" type="button" id="btn-fullscreen" title="Toàn màn hình">
+          <i class="bi bi-arrows-fullscreen"></i>
+        </button>
+
+        <!-- Notification Bell -->
+        <div class="dropdown">
+          <button class="navbar-action-btn" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="btn-notifications">
+            <i class="bi bi-bell"></i>
+            <span class="notification-indicator"></span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom" aria-labelledby="btn-notifications">
+            <li class="dropdown-header">Thông báo mới</li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-bag-check text-success"></i> Có đơn hàng mới từ website!</a></li>
+          </ul>
+        </div>
+
+        <!-- Hồ sơ Dropdown -->
+        <div class="dropdown ms-2">
+          <button class="navbar-profile-btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="profile-dropdown">
+            <img src="assets/images/avatar.png" alt="Hồ sơ Image" class="navbar-profile-img">
+            <span class="navbar-profile-name d-none d-md-inline admin-display-name">Quản trị viên</span>
+            <i class="bi bi-chevron-down navbar-profile-caret"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-profile" aria-labelledby="profile-dropdown">
+            <li class="dropdown-header">Xin chào Quản trị viên!</li>
+            <li><a class="dropdown-item" href="/client/index.html" target="_blank"><i class="bi bi-shop"></i> Xem Cửa hàng</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger btn-admin-logout" href="/client/index.html" onclick="admin.logout(); return false;"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+    <!-- END: Top Navbar Component -->
+
+    <!-- START: Page Header Banner -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Quản lý Đơn hàng</h1>
+        <p class="page-subtitle">Theo dõi, lọc và cập nhật trạng thái đơn hàng nông sản của khách hàng.</p>
+      </div>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="index.html" class="text-decoration-none text-muted-green">Trang chủ</a></li>
+          <li class="breadcrumb-item text-muted-green">Quản lý Cửa hàng</li>
+          <li class="breadcrumb-item active text-main" aria-current="page">Đơn hàng</li>
+        </ol>
+      </nav>
+    </div>
+    <!-- END: Page Header Banner -->
+
+    <!-- START: Order Table Card Container -->
+    <div class="table-card-custom">
+      <!-- Header Controls -->
+      <div class="table-header-control">
+        <!-- Search bar -->
+        <div class="table-search-box">
+          <i class="bi bi-search table-search-icon"></i>
+          <input type="text" class="table-search-input" id="admin-order-search" placeholder="Tìm theo mã đơn, tên khách, số điện thoại, địa chỉ...">
+        </div>
+        <!-- Action buttons / Filter options -->
+        <div class="table-filter-group">
+          <div class="dropdown">
+            <button class="btn-table-action dropdown-toggle" type="button" id="dropdownFilterOrderStatus" data-bs-toggle="dropdown" aria-expanded="false">
+              <i class="bi bi-funnel"></i> <span>Tất cả trạng thái</span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownFilterOrderStatus" id="orderStatusFilterMenu">
+              <li><a class="dropdown-item active" href="#" data-status="all">Tất cả trạng thái</a></li>
+              <li><a class="dropdown-item" href="#" data-status="Pending">Chờ xử lý</a></li>
+              <li><a class="dropdown-item" href="#" data-status="Processing">Đang giao hàng</a></li>
+              <li><a class="dropdown-item" href="#" data-status="Completed">Đã hoàn thành</a></li>
+              <li><a class="dropdown-item" href="#" data-status="Cancelled">Đã hủy đơn</a></li>
+            </ul>
+          </div>
+          <button class="btn-table-action" type="button" onclick="admin.loadOrdersManagement()">
+            <i class="bi bi-arrow-clockwise"></i> <span>Làm mới</span>
+          </button>
+          <button class="btn-table-action" type="button" onclick="admin.exportOrdersCSV()">
+            <i class="bi bi-file-earmark-arrow-down"></i> <span>Xuất file Excel</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Responsive Table Wrapper -->
+      <div class="table-responsive">
+        <table class="table-custom">
+          <thead>
+            <tr>
+              <th style="width: 50px;">STT</th>
+              <th style="width: 100px;">Mã đơn</th>
+              <th>Khách hàng</th>
+              <th>Mặt hàng</th>
+              <th>Tổng tiền</th>
+              <th>Thanh toán</th>
+              <th>Ngày đặt</th>
+              <th class="text-center" style="width: 130px;">Trạng thái</th>
+              <th class="text-center" style="width: 140px;">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="admin-orders-table-body">
+            <tr>
+              <td colspan="9" class="text-center py-5">
+                <div class="d-flex flex-column align-items-center justify-content-center">
+                  <div class="spinner-border text-success mb-2" role="status" style="width: 2rem; height: 2rem;">
+                    <span class="visually-hidden">Đang tải...</span>
+                  </div>
+                  <span class="fw-semibold text-muted">Đang kết nối hệ thống và tải danh sách đơn hàng...</span>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Footer Controls / Pagination -->
+      <div class="table-footer-control">
+        <span class="table-pagination-info" id="order-pagination-info">Đang tải dữ liệu đơn hàng...</span>
+      </div>
+    </div>
+    <!-- END: Order Table Card Container -->
+
+    <!-- START: Footer Component -->
+    <footer class="footer-custom">
+      <div class="footer-left">
+        <span class="footer-logo">
+          <i class="bi bi-basket2-fill"></i> Fruitables Admin
+        </span>
+        <span class="footer-separator">|</span>
+        <span class="footer-copy">&copy; 2026 Made with <i class="bi bi-heart-fill text-danger footer-heart"></i> by <strong>Fruitables Admin</strong> • Cửa hàng Nông sản Fruitables Việt Nam</span>
+      </div>
+      <div class="footer-right">
+        <ul class="footer-links">
+          <li><a href="index.html" class="footer-link">Tổng quan</a></li>
+          <li><a href="tables-basic.html" class="footer-link">Sản phẩm</a></li>
+          <li><a href="/client/index.html" target="_blank" class="footer-link">Xem Cửa hàng</a></li>
+        </ul>
+      </div>
+    </footer>
+    <!-- END: Footer Component -->
+
+  </div>
+  <!-- END: Main Layout Content Area -->
+
+  <!-- ==========================================
+       START: Modal Cập nhật Trạng thái Đơn hàng
+       ========================================== -->
+  <div class="modal fade" id="updateOrderStatusModal" tabindex="-1" aria-labelledby="updateOrderStatusModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg" style="border-radius: 1rem;">
+        <div class="modal-header border-bottom pb-3" style="background-color: var(--color-surface, #fff); border-radius: 1rem 1rem 0 0;">
+          <h5 class="modal-title fw-bold" id="updateOrderStatusModalLabel">
+            <i class="bi bi-arrow-repeat text-success me-2"></i>Cập nhật trạng thái đơn hàng
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="updateOrderStatusForm">
+          <input type="hidden" id="editOrderId">
+          <div class="modal-body p-4">
+            <div class="mb-3">
+              <label class="form-label-custom">Mã đơn hàng</label>
+              <input type="text" class="form-control-custom fw-bold text-success" id="editOrderCode" readonly>
+            </div>
+            <div class="mb-3">
+              <label class="form-label-custom">Khách hàng</label>
+              <input type="text" class="form-control-custom" id="editOrderCustomer" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="editOrderStatusSelect" class="form-label-custom">Trạng thái đơn hàng <span class="text-danger">*</span></label>
+              <select class="form-select-custom" id="editOrderStatusSelect" required>
+                <option value="Pending">Chờ xử lý (Pending)</option>
+                <option value="Processing">Đang giao hàng (Processing)</option>
+                <option value="Completed">Đã hoàn thành (Completed)</option>
+                <option value="Cancelled">Đã hủy đơn (Cancelled)</option>
+              </select>
+            </div>
+            <div class="form-check-custom mt-3">
+              <input class="form-check-input-custom" type="checkbox" id="editOrderIsPaid">
+              <label class="form-check-label fw-bold" for="editOrderIsPaid">Đã thanh toán (Paid)</label>
+            </div>
+          </div>
+          <div class="modal-footer border-top pt-3">
+            <button type="button" class="btn btn-secondary px-3" data-bs-dismiss="modal">Hủy bỏ</button>
+            <button type="submit" class="btn-custom btn-custom-primary px-4" id="btn-save-order-status">
+              <i class="bi bi-check2-circle"></i> Lưu cập nhật
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       START: Modal Xem Chi tiết Đơn hàng
+       ========================================== -->
+  <div class="modal fade" id="viewOrderModal" tabindex="-1" aria-labelledby="viewOrderModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg" style="border-radius: 1rem;">
+        <div class="modal-header border-bottom pb-3">
+          <h5 class="modal-title fw-bold" id="viewOrderModalLabel">
+            <i class="bi bi-receipt text-success me-2"></i>Chi tiết đơn hàng <span id="viewOrderCode" class="text-success"></span>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="row g-3 mb-4">
+            <div class="col-md-6">
+              <div class="p-3 bg-light rounded-3">
+                <h6 class="fw-bold mb-2 text-dark"><i class="bi bi-person me-1"></i> Thông tin khách hàng</h6>
+                <p class="mb-1"><strong>Họ tên:</strong> <span id="viewCustomerName"></span></p>
+                <p class="mb-1"><strong>Điện thoại:</strong> <span id="viewCustomerPhone"></span></p>
+                <p class="mb-1"><strong>Email:</strong> <span id="viewCustomerEmail"></span></p>
+                <p class="mb-0"><strong>Địa chỉ:</strong> <span id="viewCustomerAddress"></span></p>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="p-3 bg-light rounded-3">
+                <h6 class="fw-bold mb-2 text-dark"><i class="bi bi-info-circle me-1"></i> Thông tin đơn hàng</h6>
+                <p class="mb-1"><strong>Ngày đặt:</strong> <span id="viewOrderDate"></span></p>
+                <p class="mb-1"><strong>Thanh toán:</strong> <span id="viewOrderPayment"></span></p>
+                <p class="mb-1"><strong>Trạng thái:</strong> <span id="viewOrderStatusBadge"></span></p>
+                <p class="mb-0"><strong>Ghi chú:</strong> <span id="viewOrderNote" class="text-muted"></span></p>
+              </div>
+            </div>
+          </div>
+
+          <h6 class="fw-bold mb-3 text-dark"><i class="bi bi-box-seam me-1"></i> Danh sách mặt hàng</h6>
+          <div class="table-responsive">
+            <table class="table table-bordered table-sm align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th style="width: 50px;">STT</th>
+                  <th>Sản phẩm</th>
+                  <th class="text-center" style="width: 100px;">Đơn giá</th>
+                  <th class="text-center" style="width: 80px;">Số lượng</th>
+                  <th class="text-end" style="width: 120px;">Thành tiền</th>
+                </tr>
+              </thead>
+              <tbody id="viewOrderItemsTable">
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td colspan="4" class="text-end fw-bold">Tổng thanh toán:</td>
+                  <td class="text-end fw-bold text-success fs-6" id="viewOrderTotal"></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer border-top pt-3">
+          <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">Đóng</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Local Third-Party Libraries Script dependencies -->
+  <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/libs/flatpickr/flatpickr.min.js"></script>
+
+  <!-- Local dashboard interactions controller -->
+  <script src="assets/js/dashboard.js"></script>
+  <!-- Fruitables Admin Backend Integration & Theme Switcher -->
+  <script src="assets/js/admin-api.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập Quản trị - Fruitables Admin</title>
+    
+    <!-- SEO Optimization -->
+    <meta name="description" content="Đăng nhập Quản trị - Fruitables Admin">
+    <meta name="author" content="Fruitables Việt Nam">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/favicon.ico">
+    
+    <!-- Local Third-Party Libraries (100% Offline Compatible) -->
+    <link rel="stylesheet" href="assets/libs/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/libs/bootstrap-icons/bootstrap-icons.css">
+    
+    <!-- Main Design System & Custom Stylesheet -->
+    <link rel="stylesheet" href="assets/css/main.css">
+
+
+    <!-- Theme Auto-detection Script -->
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem('fruitables_theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+</head>
+<body>
+
+    <!-- Dark / Light Theme Floating Toggle -->
+    <div class="theme-toggle-floating">
+        <button type="button" id="btn-theme-toggle" class="btn-theme-toggle" title="Đổi giao diện Tối / Sáng" aria-label="Đổi giao diện Tối / Sáng">
+            <i class="bi bi-moon-stars-fill"></i>
+        </button>
+    </div>
+
+    <!-- ==========================================
+         START: Authentication Container & Login Card
+         ========================================== -->
+    <div class="login-wrapper">
+        <!-- Glowing background shapes for modern visual appearance -->
+        <div class="login-bg-shape login-bg-shape-1"></div>
+        <div class="login-bg-shape login-bg-shape-2"></div>
+        
+        <!-- Main centered login card -->
+        <div class="login-card">
+            
+            <!-- Brand Identity -->
+            <div class="login-brand">
+                <i class="bi bi-basket2-fill text-lime me-2"></i>
+                <span>Fruitables Admin</span>
+            </div>
+            
+            <p class="login-subtitle">Vui lòng đăng nhập để truy cập bảng điều khiển</p>
+            
+            <!-- Login Form -->
+            <form action="index.html" method="GET" id="loginForm" class="needs-validation" novalidate>
+                
+                <!-- Email Input Group -->
+                <div class="login-form-group">
+                    <label for="email" class="login-form-label">Địa chỉ Email</label>
+                    <div class="login-input-group">
+                        <i class="bi bi-envelope input-icon"></i>
+                        <input type="email" id="email" class="login-input" placeholder="name@company.com" required>
+                    </div>
+                </div>
+                
+                <!-- Password Input Group -->
+                <div class="login-form-group">
+                    <label for="password" class="login-form-label">Mật khẩu</label>
+                    <div class="login-input-group">
+                        <i class="bi bi-shield-lock input-icon"></i>
+                        <input type="password" id="password" class="login-input login-input-password" placeholder="••••••••" required>
+                        <button type="button" class="password-toggle-btn" id="toggle-password" aria-label="Show password">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Options (Remember me & Forgot Password) -->
+                <div class="login-options">
+                    <label class="custom-control-label">
+                        <input type="checkbox" class="custom-checkbox-input" id="rememberMe">
+                        <span>Ghi nhớ đăng nhập</span>
+                    </label>
+                    <a href="#" class="forgot-password-link">Quên mật khẩu?</a>
+                </div>
+                
+                <!-- Submit Button -->
+                <button type="submit" class="btn-login" id="btn-submit">
+                    <span>Đăng nhập vào Quản trị</span>
+                    <i class="bi bi-arrow-right"></i>
+                </button>
+                
+            </form>
+            
+            <!-- Footer Link & Quick actions -->
+            <div class="mt-4 pt-3 border-top text-center">
+                <button type="button" onclick="document.getElementById('email').value='admin@fruitables.com'; document.getElementById('password').value='admin123';" class="btn btn-sm btn-outline-warning btn-admin-fill fw-bold rounded-pill px-3 py-1 mb-3">
+                    ⚡ Điền tài khoản Admin (admin@fruitables.com)
+                </button>
+                <div>
+                    <a href="/client/index.html" class="text-muted small text-decoration-none">
+                        <i class="bi bi-arrow-left me-1"></i> Quay lại Cửa hàng Fruitables
+                    </a>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+    <!-- END: Authentication Container -->
+
+    <!-- Local Bootstrap bundle -->
+    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Custom Authentication interactions script -->
+    <script src="assets/js/auth.js"></script>
+    <!-- Fruitables Admin Backend Integration -->
+    <script src="assets/js/admin-api.js"></script>
+</body>
+</html>

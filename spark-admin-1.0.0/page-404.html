@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lỗi 404 - Không tìm thấy trang - Fruitables Admin</title>
+    
+    <!-- SEO Optimization -->
+    <meta name="description" content="404 Không tìm thấy trang - Fruitables Admin Premium Bootstrap 5 Admin Dashboard Template">
+    <meta name="author" content="Fruitables Việt Nam">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/images/favicon.ico">
+    
+    <!-- Local Third-Party Libraries (100% Offline Compatible) -->
+    <link rel="stylesheet" href="assets/libs/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="assets/libs/bootstrap-icons/bootstrap-icons.css">
+    
+    <!-- Main Design System & Custom Stylesheet -->
+    <link rel="stylesheet" href="assets/css/main.css">
+
+    <!-- Theme Auto-detection Script -->
+    <script>
+      (function () {
+        try {
+          if (localStorage.getItem('fruitables_theme') === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+</head>
+<body>
+
+    <!-- Dark / Light Theme Floating Toggle -->
+    <div class="theme-toggle-floating">
+        <button type="button" id="btn-theme-toggle" class="btn-theme-toggle" title="Đổi giao diện Tối / Sáng" aria-label="Đổi giao diện Tối / Sáng">
+            <i class="bi bi-moon-stars-fill"></i>
+        </button>
+    </div>
+
+    <!-- ==========================================
+         START: 404 Error Page Container & Card
+         ========================================== -->
+    <div class="login-wrapper">
+        <!-- Glowing background shapes matching theme aesthetic -->
+        <div class="login-bg-shape login-bg-shape-1"></div>
+        <div class="login-bg-shape login-bg-shape-2"></div>
+        
+        <!-- Main centered error card layout -->
+        <div class="login-card text-center">
+            
+            <!-- Brand Identity -->
+            <div class="login-brand">
+                <i class="bi bi-basket2-fill text-lime me-2"></i>
+                <span>Fruitables Admin</span>
+            </div>
+            
+            <!-- Giant 404 header with spinning asterisk Zero -->
+            <div class="error-title-huge">
+                <span>4</span>
+                <i class="bi bi-asterisk"></i>
+                <span>4</span>
+            </div>
+            
+            <h2 class="error-subtitle">Không tìm thấy trang</h2>
+            <p class="error-desc">
+                Trang bạn đang tìm kiếm có thể đã bị xóa, thay đổi đường dẫn hoặc tạm thời không khả dụng.
+            </p>
+            
+            <div class="error-actions-group">
+                <a href="index.html" class="btn-custom btn-custom-primary">
+                    <i class="bi bi-house"></i> Quay lại Bảng điều khiển
+                </a>
+            </div>
+            
+        </div>
+    </div>
+    <!-- END: 404 Error Page Container -->
+
+    <!-- Local Third-Party Libraries Script dependencies -->
+    <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <!-- Fruitables Admin Backend Integration & Theme Switcher -->
+    <script src="assets/js/admin-api.js"></script>
+</body>
+</html>

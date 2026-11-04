@@ -1,0 +1,486 @@
+/* ==========================================================================
+   FRUITABLES MODERN DARK THEME SYSTEM
+   Màu sắc chuẩn hữu cơ cao cấp (Dark Organic Forest & Vibrant Lime)
+   ========================================================================== */
+
+:root {
+    --theme-transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Kích hoạt chuyển cảnh mượt mà khi đổi theme */
+body, 
+.fixed-top, 
+.navbar, 
+.card, 
+.fruite-item, 
+.vesitable-item, 
+.featurs-item, 
+.modal-content, 
+.form-control, 
+.table,
+.footer {
+    transition: var(--theme-transition);
+}
+
+/* ==========================================================================
+   BODY & CẤU TRÚC NỀN CHÍNH
+   ========================================================================== */
+body.dark-mode {
+    background-color: #0c140f !important;
+    color: #cddcd2 !important;
+}
+
+/* Đổi màu chữ cơ bản */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6,
+body.dark-mode .text-dark {
+    color: #f1f8f3 !important;
+}
+
+body.dark-mode p,
+body.dark-mode span:not(.badge):not(.text-primary):not(.text-secondary):not(.text-warning):not(.text-danger):not(.text-white) {
+    color: #cde0d5;
+}
+
+body.dark-mode .text-muted {
+    color: #a3c2b0 !important;
+}
+
+/* Các khối background */
+body.dark-mode .bg-white {
+    background-color: #142018 !important;
+}
+
+body.dark-mode .bg-light {
+    background-color: #0f1913 !important;
+}
+
+body.dark-mode .border,
+body.dark-mode .border-top,
+body.dark-mode .border-bottom,
+body.dark-mode .border-start,
+body.dark-mode .border-end {
+    border-color: #1f3326 !important;
+}
+
+/* ==========================================================================
+   THANH ĐIỀU HƯỚNG & HEADER
+   ========================================================================== */
+body.dark-mode .fixed-top {
+    background-color: #111b14 !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.45);
+}
+
+body.dark-mode .navbar {
+    border-bottom: 1px solid #1f3326;
+}
+
+body.dark-mode .navbar .navbar-brand h1 {
+    color: #81c408 !important;
+}
+
+body.dark-mode .navbar .navbar-nav .nav-link {
+    color: #d2e4d7;
+}
+
+body.dark-mode .navbar .navbar-nav .nav-link:hover,
+body.dark-mode .navbar .navbar-nav .nav-link.active {
+    color: #81c408 !important;
+}
+
+/* Topbar */
+body.dark-mode .topbar.bg-primary {
+    background: linear-gradient(135deg, #0f3d1e 0%, #17542c 100%) !important;
+    border-bottom: 1px solid #235735;
+}
+
+body.dark-mode .topbar .text-white {
+    color: #e5f5eb !important;
+}
+
+/* Dropdown Menu */
+body.dark-mode .dropdown-menu {
+    background-color: #15231a !important;
+    border: 1px solid #233b2b !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.dark-mode .dropdown-item {
+    color: #c7dcd0 !important;
+}
+
+body.dark-mode .dropdown-item:hover,
+body.dark-mode .dropdown-item:focus {
+    background-color: #1e3626 !important;
+    color: #81c408 !important;
+}
+
+/* Nút chuyển đổi Theme */
+.btn-theme-toggle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #ffffff;
+    border: 1px solid #81c408 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.btn-theme-toggle:hover {
+    transform: scale(1.08) rotate(15deg);
+}
+
+body.dark-mode .btn-theme-toggle {
+    background: #18281e !important;
+    border-color: #ffb524 !important;
+    box-shadow: 0 0 15px rgba(255, 181, 36, 0.25);
+}
+
+body.dark-mode .btn-theme-toggle i {
+    color: #ffb524 !important;
+    text-shadow: 0 0 8px rgba(255, 181, 36, 0.6);
+}
+
+/* Nút Search tròn, Giỏ hàng & User */
+body.dark-mode .btn-search {
+    background: #16241b !important;
+    border-color: #243c2c !important;
+}
+
+body.dark-mode .btn-search i {
+    color: #81c408 !important;
+}
+
+body.dark-mode .btn-user-auth i,
+body.dark-mode .fa-shopping-bag {
+    color: #81c408 !important;
+}
+
+/* ==========================================================================
+   HERO HEADER & BANNER
+   ========================================================================== */
+body.dark-mode .hero-header {
+    background: linear-gradient(rgba(12, 20, 15, 0.92), rgba(12, 20, 15, 0.94)), url(../img/hero-img.jpg);
+    background-size: cover;
+}
+
+body.dark-mode .page-header {
+    background: linear-gradient(rgba(12, 20, 15, 0.85), rgba(12, 20, 15, 0.88)), url(../img/cart-page-header-img.jpg);
+    background-size: cover;
+}
+
+/* ==========================================================================
+   SẢN PHẨM & CARD HIỂN THỊ
+   ========================================================================== */
+body.dark-mode .fruite-item,
+body.dark-mode .vesitable-item,
+body.dark-mode .card {
+    background-color: #142118 !important;
+    border: 1px solid #203527 !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+body.dark-mode .fruite-item:hover,
+body.dark-mode .vesitable-item:hover {
+    box-shadow: 0 10px 30px rgba(129, 196, 8, 0.15) !important;
+    border-color: #2e4d38 !important;
+}
+
+body.dark-mode .fruite-item h4 a,
+body.dark-mode .vesitable-item h4 {
+    color: #f1f8f3 !important;
+}
+
+body.dark-mode .fruite-item p,
+body.dark-mode .vesitable-item p {
+    color: #b9d1c1 !important;
+}
+
+body.dark-mode .tab-class .nav-item a.active {
+    background: #81c408 !important;
+    color: #0c140f !important;
+}
+
+body.dark-mode .tab-class .nav-item a.bg-light {
+    background: #18281e !important;
+    color: #c7dcd0 !important;
+}
+
+/* Hộp tính năng đặc sắc */
+body.dark-mode .featurs-item {
+    background-color: #142118 !important;
+    border: 1px solid #1f3426;
+}
+
+body.dark-mode .featurs-item .featurs-icon {
+    background: #1d3023 !important;
+}
+
+body.dark-mode .featurs-item h5 {
+    color: #f1f8f3 !important;
+}
+
+body.dark-mode .featurs-item p {
+    color: #b2c9ba !important;
+}
+
+/* Khối dịch vụ & Banner khuyến mãi */
+body.dark-mode .service-item {
+    background-color: #142118 !important;
+    border: 1px solid #1f3426;
+}
+
+body.dark-mode .service-item .service-content {
+    background-color: #142118 !important;
+}
+
+/* ==========================================================================
+   BIỂU MẪU & INPUT & MODAL
+   ========================================================================== */
+body.dark-mode .form-control,
+body.dark-mode .form-select {
+    background-color: #16241b !important;
+    border-color: #253d2d !important;
+    color: #f1f8f3 !important;
+}
+
+body.dark-mode .form-control:focus,
+body.dark-mode .form-select:focus {
+    border-color: #81c408 !important;
+    box-shadow: 0 0 0 0.25rem rgba(129, 196, 8, 0.2) !important;
+    background-color: #192a20 !important;
+}
+
+body.dark-mode .form-control::placeholder {
+    color: #6a8573 !important;
+}
+
+body.dark-mode .input-group-text {
+    background-color: #1e3325 !important;
+    border-color: #253d2d !important;
+    color: #a5bfae !important;
+}
+
+/* Modal tìm kiếm */
+body.dark-mode #searchModal .modal-content {
+    background-color: rgba(12, 20, 15, 0.95) !important;
+    border: 1px solid #253d2d !important;
+}
+
+/* Modal đăng nhập / đăng ký */
+body.dark-mode .modal-content {
+    background-color: #142118 !important;
+    border: 1px solid #253d2d !important;
+    color: #f1f8f3 !important;
+}
+
+body.dark-mode .modal-header,
+body.dark-mode .modal-footer {
+    border-color: #203527 !important;
+}
+
+body.dark-mode .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* ==========================================================================
+   BẢNG DỮ LIỆU (GIỎ HÀNG & THANH TOÁN)
+   ========================================================================== */
+body.dark-mode .table {
+    color: #cddcd2 !important;
+    border-color: #1f3326 !important;
+}
+
+body.dark-mode .table > :not(caption) > * > * {
+    background-color: transparent !important;
+    border-bottom-color: #1f3326 !important;
+    color: #cddcd2 !important;
+}
+
+body.dark-mode .table th {
+    color: #f1f8f3 !important;
+    border-bottom: 2px solid #2b4534 !important;
+}
+
+/* Phân trang */
+body.dark-mode .pagination .page-link {
+    background-color: #16241b !important;
+    border-color: #233b2b !important;
+    color: #cddcd2 !important;
+}
+
+body.dark-mode .pagination .page-item.active .page-link {
+    background-color: #81c408 !important;
+    border-color: #81c408 !important;
+    color: #0c140f !important;
+}
+
+/* Đánh giá khách hàng (Testimonial) */
+body.dark-mode .testimonial-item {
+    background-color: #142118 !important;
+    border: 1px solid #203527;
+}
+
+/* Footer */
+body.dark-mode .footer {
+    background-color: #080f0a !important;
+    border-top: 1px solid #18281e;
+}
+
+body.dark-mode .footer .footer-item h4 {
+    color: #f1f8f3 !important;
+}
+
+body.dark-mode .footer .footer-item a,
+body.dark-mode .footer .footer-item p {
+    color: #8ba594 !important;
+}
+
+body.dark-mode .footer .footer-item a:hover {
+    color: #81c408 !important;
+}
+
+body.dark-mode .copyright {
+    background-color: #050a07 !important;
+    border-top: 1px solid #132219 !important;
+}
+
+/* ==========================================================================
+   TRANG ĐĂNG NHẬP (LOGIN & ADMIN LOGIN) TRONG GIAO DIỆN TỐI
+   ========================================================================== */
+body.dark-mode .auth-card {
+    background-color: #142118 !important;
+    border-color: #203527 !important;
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.dark-mode .form-label {
+    color: #e5f5eb !important;
+}
+
+/* Nút điền tài khoản mẫu / điền tài khoản Admin */
+body.dark-mode .auth-card .btn-light,
+body.dark-mode .btn-light {
+    background-color: rgba(255, 193, 7, 0.12) !important;
+    border-color: rgba(255, 193, 7, 0.4) !important;
+    color: #ffd24d !important;
+}
+
+body.dark-mode .auth-card .btn-light:hover,
+body.dark-mode .btn-light:hover {
+    background-color: #ffc107 !important;
+    color: #0c140f !important;
+    border-color: #ffc107 !important;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3) !important;
+}
+
+body.dark-mode .auth-card .btn-light .text-muted,
+body.dark-mode .auth-card .btn-light.text-muted {
+    color: #ffd24d !important;
+}
+
+body.dark-mode .auth-card .btn-light:hover .text-muted,
+body.dark-mode .auth-card .btn-light:hover.text-muted {
+    color: #0c140f !important;
+}
+
+/* Link Quên mật khẩu? */
+body.dark-mode .auth-card a.text-muted,
+body.dark-mode .auth-card a.small.text-muted {
+    color: #81c408 !important;
+    font-weight: 600 !important;
+    text-shadow: 0 0 8px rgba(129, 196, 8, 0.25);
+    text-decoration: none !important;
+}
+
+body.dark-mode .auth-card a.text-muted:hover,
+body.dark-mode .auth-card a.small.text-muted:hover {
+    color: #a4f21d !important;
+    text-decoration: underline !important;
+}
+
+/* Tab chuyển đổi Khách hàng / Admin */
+body.dark-mode .auth-tab-btn {
+    color: #b0ccbc !important;
+    background: transparent;
+}
+
+body.dark-mode .auth-tab-btn.active.customer-tab {
+    background: #81c408 !important;
+    color: #0c140f !important;
+    font-weight: 800 !important;
+}
+
+body.dark-mode .auth-tab-btn.active.admin-tab {
+    background: #ffc107 !important;
+    color: #0c140f !important;
+    font-weight: 800 !important;
+}
+
+/* Banner hướng dẫn khu vực Admin */
+body.dark-mode .admin-banner {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.16) 0%, rgba(255, 181, 36, 0.08) 100%) !important;
+    border: 1px solid rgba(255, 193, 7, 0.3) !important;
+    border-left: 5px solid #ffc107 !important;
+}
+
+body.dark-mode .admin-banner .text-dark,
+body.dark-mode .admin-banner span {
+    color: #f1f8f3 !important;
+}
+
+body.dark-mode .admin-banner strong {
+    color: #ffd24d !important;
+}
+
+/* Nút chuyển sang trang đăng nhập admin riêng */
+body.dark-mode .btn-outline-warning,
+body.dark-mode .btn-outline-warning.text-dark {
+    color: #ffd24d !important;
+    border-color: rgba(255, 193, 7, 0.6) !important;
+    background-color: rgba(255, 193, 7, 0.12) !important;
+}
+
+body.dark-mode .btn-outline-warning:hover,
+body.dark-mode .btn-outline-warning.text-dark:hover {
+    background-color: #ffc107 !important;
+    color: #0c140f !important;
+    border-color: #ffc107 !important;
+}
+
+/* Nút submit admin */
+body.dark-mode #btn-p-adm-submit,
+body.dark-mode .btn-warning {
+    background-color: #ffc107 !important;
+    color: #0c140f !important;
+    border-color: #ffc107 !important;
+    font-weight: 800 !important;
+}
+
+body.dark-mode #btn-p-adm-submit:hover,
+body.dark-mode .btn-warning:hover {
+    background-color: #ffca2c !important;
+    color: #0c140f !important;
+    box-shadow: 0 4px 18px rgba(255, 193, 7, 0.4) !important;
+}
+
+/* Các viền và text phụ trong Auth Card */
+body.dark-mode .auth-card .border-top {
+    border-color: #203527 !important;
+}
+
+body.dark-mode .auth-card p.text-muted {
+    color: #a3c2b0 !important;
+}
+
+body.dark-mode .auth-card .bg-light {
+    background-color: #0d1710 !important;
+}

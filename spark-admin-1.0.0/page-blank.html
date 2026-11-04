@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trang mẫu trống - Fruitables Admin</title>
+
+  <!-- SEO Optimization -->
+  <meta name="description" content="Blank Page - Fruitables Admin Premium Bootstrap 5 Admin Dashboard Template">
+  <meta name="author" content="Fruitables Việt Nam">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/favicon.ico">
+
+  <!-- Local Third-Party Libraries (100% Offline Compatible) -->
+  <link rel="stylesheet" href="assets/libs/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="assets/libs/bootstrap-icons/bootstrap-icons.css">
+  <link rel="stylesheet" href="assets/libs/apexcharts/apexcharts.css">
+  <link rel="stylesheet" href="assets/libs/flatpickr/flatpickr.min.css">
+
+  <!-- Main Design System & Custom Stylesheet -->
+  <link rel="stylesheet" href="assets/css/main.css">
+
+  <!-- Theme Auto-detection Script -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('fruitables_theme') === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+
+<body>
+
+  <!-- ==========================================
+         START: Sidebar Component
+         Highly polished, dark-green navigation
+         ========================================== -->
+  <div class="sidebar-wrapper" id="sidebar">
+    <!-- Brand Logo / Identity -->
+    <div class="sidebar-brand">
+      <i class="bi bi-basket2-fill text-lime"></i>
+      <span>Fruitables Admin</span>
+    </div>
+
+    <!-- Navigation Menu -->
+    <div class="flex-grow-1 overflow-y-auto">
+      <!-- Group: Quản lý Cửa hàng -->
+      <div class="sidebar-menu-section">
+        <div class="sidebar-menu-title">Quản lý Cửa hàng</div>
+        <ul class="sidebar-menu-list">
+          <li class="sidebar-menu-item">
+            <a href="index.html" class="sidebar-menu-link" id="menu-overview" title="Bảng điều khiển">
+              <i class="bi bi-grid-fill"></i>
+              <span>Bảng điều khiển</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="tables-basic.html" class="sidebar-menu-link" id="menu-products" title="Quản lý Nông sản">
+              <i class="bi bi-basket2-fill"></i>
+              <span>Quản lý Nông sản</span>
+            </a>
+          </li>
+          <li class="sidebar-menu-item">
+            <a href="orders.html" class="sidebar-menu-link" id="menu-orders" title="Quản lý Đơn hàng">
+              <i class="bi bi-receipt"></i>
+              <span>Quản lý Đơn hàng</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Group: Hệ thống & Cửa hàng -->
+      <div class="sidebar-menu-section">
+        <div class="sidebar-menu-title">Hệ thống & Cửa hàng</div>
+        <ul class="sidebar-menu-list">
+          <li class="sidebar-menu-item">
+            <a href="/client/index.html" target="_blank" class="sidebar-menu-link" id="menu-viewstore" title="Xem Cửa hàng Khách">
+              <i class="bi bi-shop"></i>
+              <span>Xem Cửa hàng Khách</span>
+              <i class="bi bi-box-arrow-up-right ms-auto text-muted small"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Sidebar Hồ sơ Card (Dynamic Footer) -->
+    <div class="sidebar-profile">
+      <img src="assets/images/avatar.png" alt="Administrator" class="sidebar-profile-img"
+        onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=256&auto=format&fit=crop'">
+      <div class="sidebar-profile-info">
+        <div class="sidebar-profile-name">Administrator</div>
+        <div class="sidebar-profile-email">admin@email.com</div>
+      </div>
+    </div>
+  </div>
+  <!-- ==========================================
+         END: Sidebar Component
+         ========================================== -->
+
+
+  <!-- ==========================================
+         START: Main Content Area
+         ========================================== -->
+  <div class="main-wrapper">
+
+    <!-- START: Top Navbar Component -->
+    <header class="navbar-custom">
+      <div class="navbar-left">
+        <!-- Desktop sidebar toggle (visible on large screens only) -->
+        <button class="btn-desktop-toggle d-none d-xl-flex align-items-center justify-content-center me-3"
+          id="desktop-sidebar-toggle" aria-label="Minimize Sidebar">
+          <i class="bi bi-chevron-bar-left"></i>
+        </button>
+        <!-- Mobile sidebar toggle -->
+        <button class="sidebar-toggle-btn me-2" id="sidebar-toggle" aria-label="Toggle Navigation">
+          <i class="bi bi-list"></i>
+        </button>
+      </div>
+
+      <!-- Mid navbar: search pill -->
+      <div class="navbar-search-wrapper">
+        <input type="text" class="navbar-search-input" placeholder="Tìm kiếm trong hệ thống..." id="main-search">
+        <button class="navbar-search-btn" aria-label="Search">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+
+      <!-- Right actions -->
+      <div class="navbar-actions">
+        <!-- Theme Toggle (Tối / Sáng) -->
+        <button class="navbar-action-btn me-1" aria-label="Đổi giao diện Tối / Sáng" id="btn-theme-toggle" title="Đổi giao diện Tối / Sáng">
+          <i class="bi bi-moon-stars"></i>
+        </button>
+        <!-- Fullscreen Toggle -->
+        <button class="navbar-action-btn me-1" aria-label="Toggle Fullscreen" id="btn-fullscreen">
+          <i class="bi bi-arrows-fullscreen"></i>
+        </button>
+        <div class="dropdown">
+          <button class="navbar-action-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false" id="btn-notifications" data-bs-auto-close="outside">
+            <i class="bi bi-bell"></i>
+            <span class="navbar-action-badge"></span>
+          </button>
+          <div class="dropdown-menu dropdown-menu-end dropdown-menu-notification p-0"
+            aria-labelledby="btn-notifications">
+            <div class="notification-header">
+              <h6 class="notification-title">Thông báo</h6>
+              <button class="btn-clear-all" type="button">Đánh dấu đã đọc</button>
+            </div>
+            <div class="notification-list">
+              <!-- Sale Notification -->
+              <a href="#" class="notification-item">
+                <div class="notification-icon bg-success text-white">
+                  <i class="bi bi-wallet2"></i>
+                </div>
+                <div class="notification-content">
+                  <p class="notification-text">New sale received: <strong>$150.00</strong></p>
+                  <span class="notification-time">2 mins ago</span>
+                </div>
+                <span class="notification-unread-dot"></span>
+              </a>
+              <!-- User Registration Notification -->
+              <a href="#" class="notification-item">
+                <div class="notification-icon bg-primary text-white">
+                  <i class="bi bi-person-plus-fill"></i>
+                </div>
+                <div class="notification-content">
+                  <p class="notification-text">New user registered: <strong>John Doe</strong></p>
+                  <span class="notification-time">1 hour ago</span>
+                </div>
+                <span class="notification-unread-dot"></span>
+              </a>
+              <!-- Low Stock Notification -->
+              <a href="#" class="notification-item">
+                <div class="notification-icon bg-warning text-dark">
+                  <i class="bi bi-box-seam-fill"></i>
+                </div>
+                <div class="notification-content">
+                  <p class="notification-text">Stock running low: <strong>Hoodie</strong></p>
+                  <span class="notification-time">3 hours ago</span>
+                </div>
+              </a>
+            </div>
+            <a href="#" class="notification-footer">Xem tất cả Thông báo</a>
+          </div>
+        </div>
+
+        <!-- Hồ sơ Dropdown -->
+        <div class="dropdown ms-2">
+          <button class="navbar-profile-btn dropdown-toggle" type="button" data-bs-toggle="dropdown"
+            aria-expanded="false" id="profile-dropdown">
+            <img src="assets/images/avatar.png" alt="Hồ sơ Image" class="navbar-profile-img">
+            <span class="navbar-profile-name d-none d-md-inline">Administrator</span>
+            <i class="bi bi-chevron-down navbar-profile-caret"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-profile" aria-labelledby="profile-dropdown">
+            <li class="dropdown-header">Xin chào Quản trị viên!</li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-person"></i> Tài khoản của tôi</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-gear"></i> Cài đặt hệ thống</a></li>
+            <li><a class="dropdown-item" href="#"><i class="bi bi-lock"></i> Khóa màn hình</a></li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li><a class="dropdown-item text-danger btn-admin-logout" href="/client/index.html" onclick="admin.logout(); return false;"><i class="bi bi-box-arrow-right"></i> Đăng xuất</a></li>
+          </ul>
+        </div>
+      </div>
+    </header>
+    <!-- END: Top Navbar Component -->
+
+    <!-- START: Page Header Banner -->
+    <div class="page-header">
+      <div>
+        <h1 class="page-title">Trang mẫu trống</h1>
+        <p class="page-subtitle">Khung trang trắng sẵn sàng để phát triển thêm các tính năng mới.</p>
+      </div>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb mb-0">
+          <li class="breadcrumb-item"><a href="index.html" class="text-decoration-none text-muted-green">Trang chủ</a></li>
+          <li class="breadcrumb-item active text-main" aria-current="page">Blank Page</li>
+        </ol>
+      </nav>
+    </div>
+    <!-- END: Page Header Banner -->
+
+    <!-- START: Blank Page Content Area -->
+    <div class="card p-4 border-light shadow-sm text-center">
+      <div>
+        <div class="mb-4 text-lime empty-state-icon">
+          <i class="bi bi-file-earmark-fill"></i>
+        </div>
+        <h3 class="mb-2">Nội dung của bạn bắt đầu tại đây</h3>
+        <p class="text-muted-green mb-4">Sử dụng mẫu trang này để xây dựng thêm các tính năng xem biểu đồ, bảng dữ liệu hoặc báo cáo theo nhu cầu của bạn.</p>
+      </div>
+    </div>
+    <!-- END: Blank Page Content Area -->
+
+
+    <!-- START: Footer Component -->
+    <footer class="footer-custom">
+      <div class="footer-left">
+        <span class="footer-logo">
+          <i class="bi bi-basket2-fill"></i> Fruitables Admin
+        </span>
+        <span class="footer-separator">|</span>
+        <span class="footer-copy">&copy; 2026 Made with <i class="bi bi-heart-fill text-danger footer-heart"></i> by <strong>Fruitables Admin</strong> • Cửa hàng Nông sản Fruitables Việt Nam</span>
+      </div>
+      <div class="footer-right">
+        <ul class="footer-links">
+          <li><a href="#" class="footer-link">Tổng quan</a></li>
+          <li><a href="#" class="footer-link">Thống kê</a></li>
+          <li><a href="#" class="footer-link">Trợ giúp & Tài liệu</a></li>
+          <li><a href="#" class="footer-link">Hệ thống: Hoạt động tốt <span class="status-dot"></span></a></li>
+        </ul>
+      </div>
+    </footer>
+    <!-- END: Footer Component -->
+
+  </div>
+  <!-- ==========================================
+         END: Main Content Area
+         ========================================== -->
+
+  <!-- Local Third-Party Libraries Script dependencies -->
+  <script src="assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/libs/apexcharts/apexcharts.min.js"></script>
+  <script src="assets/libs/flatpickr/flatpickr.min.js"></script>
+
+  <!-- Local dashboard interactions controller -->
+  <script src="assets/js/dashboard.js"></script>
+  <!-- Fruitables Admin Backend Integration & Theme Switcher -->
+  <script src="assets/js/admin-api.js"></script>
+</body>
+
+</html>
