@@ -1,4 +1,5 @@
 const Category = require('../models/Category');
+const { isNonEmptyString } = require('../utils/validation');
 
 // @desc    Lấy danh sách tất cả danh mục
 // @route   GET /api/categories
@@ -18,6 +19,10 @@ const getCategories = async (req, res, next) => {
 const createCategory = async (req, res, next) => {
   try {
     const { name, description } = req.body;
+    if (!isNonEmptyString(name)) {
+      return res.status(400).json({ success: false, message: 'Tên danh mục không được để trống' });
+    }
+
     let image = '';
     if (req.file) {
       image = `/uploads/${req.file.filename}`;
