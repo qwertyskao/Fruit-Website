@@ -36,7 +36,7 @@ const getProducts = async (req, res, next) => {
       const pageValue = req.query.page;
       const limitValue = req.query.limit;
 
-      if (typeof pageValue !== 'string' || !/^\\d+$/.test(pageValue) || Number(pageValue) < 1) {
+      if (typeof pageValue !== 'string' || !/^\d+$/.test(pageValue) || Number(pageValue) < 1) {
         return res.status(400).json({
           success: false,
           message: 'Tham số page phải là số nguyên dương',
@@ -47,7 +47,7 @@ const getProducts = async (req, res, next) => {
       const limit = limitValue === undefined ? 12 : Number(limitValue);
 
       if (
-        (limitValue !== undefined && (typeof limitValue !== 'string' || !/^\\d+$/.test(limitValue))) ||
+        (limitValue !== undefined && (typeof limitValue !== 'string' || !/^\d+$/.test(limitValue))) ||
         !Number.isSafeInteger(limit) ||
         limit < 1 ||
         limit > 100
