@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const Order = require('../models/Order');
 const Product = require('../models/Product');
 const sendEmail = require('../utils/sendMail');
+const { escapeHtml } = require('../utils/sanitize');
+const { isNonEmptyString, isValidEmail } = require('../utils/validation');
 
 // Phí vận chuyển: miễn phí từ 300.000đ, dưới mức này là 30.000đ.
 const FREE_SHIPPING_THRESHOLD = 300000;
@@ -38,6 +40,20 @@ const createOrder = async (req, res, next) => {
 
     if (!Array.isArray(requestedItems) || requestedItems.length === 0) {
       return res.status(400).json({ success: false, message: 'Giỏ hàng trống hoặc không hợp lệ' });
+    }
+
+    if (!shippingAddress || typeof shippingAddress !== 'object' || Array.isArray(shippingAddress)) {
+      return res.status(400).json({ success: false, message: 'Thông tin giao hàng không hợp lệ' });
+    }
+    if (!isNonEmptyString(shippingAddress.fullName)) {
+      return res.status(400).json({ success: false, message: 'Tên người nhận không được để trống' });
+    }
+    if (!isValidEmail(shippingAddress.email)) {
+      return res.status(400).json({ success: false, message: 'Email người nhận không đúng định dạng' });
+    }
+    shippingAddress.email = shippingAddress.email.trim().toLowerCase();
+    if (!isNonEmptyString(shippingAddress.phone) || !isNonEmptyString(shippingAddress.address)) {
+      return res.status(400).json({ success: false, message: 'Vui lòng nhập số điện thoại và địa chỉ giao hàng' });
     }
 
     // Chỉ nhận ID sản phẩm và số lượng. Không sử dụng giá/tên/tổng tiền từ client.
@@ -154,7 +170,7 @@ const createOrder = async (req, res, next) => {
           .map(
             (item) =>
               `<tr>
-                <td style="padding: 8px; border: 1px solid #ddd;">${item.name}</td>
+                <td style="padding: 8px; border: 1px solid #ddd;">${escapeHtml(item.name)}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: center;">${item.qty}</td>
                 <td style="padding: 8px; border: 1px solid #ddd; text-align: right;">${item.price.toLocaleString('vi-VN')} đ</td>
               </tr>`
@@ -164,8 +180,8 @@ const createOrder = async (req, res, next) => {
         const emailContent = `
           <h2>Cảm ơn bạn đã đặt hàng tại Fruitables!</h2>
           <p>Mã đơn hàng của bạn: <strong>#${createdOrder._id}</strong></p>
-          <p>Người nhận: ${shippingAddress.fullName} - SĐT: ${shippingAddress.phone}</p>
-          <p>Địa chỉ giao hàng: ${shippingAddress.address}, ${shippingAddress.city || ''}</p>
+          <p>Người nhận: ${escapeHtml(shippingAddress.fullName)} - SĐT: ${escapeHtml(shippingAddress.phone)}</p>
+          <p>Địa chỉ giao hàng: ${escapeHtml(shippingAddress.address)}, ${escapeHtml(shippingAddress.city || '')}</p>
           <h3>Chi tiết đơn hàng:</h3>
           <table style="width: 100%; border-collapse: collapse;">
             <thead>
@@ -180,7 +196,7 @@ const createOrder = async (req, res, next) => {
             </tbody>
           </table>
           <p style="margin-top: 15px; font-size: 16px;"><strong>Tổng thanh toán: ${totalPrice.toLocaleString('vi-VN')} đ</strong></p>
-          <p>Phương thức thanh toán: <strong>${paymentMethod}</strong></p>
+          <p>Phương thức thanh toán: <strong>${escapeHtml(paymentMethod)}</strong></p>
           <br>
           <p>Chúng tôi sẽ liên hệ để xác nhận và giao hàng sớm nhất!</p>
         `;
@@ -229,6 +245,77 @@ const getMyOrders = async (req, res, next) => {
   }
 };
 
+// @desc    Khách hàng hủy đơn đang chờ xử lý
+// @route   PUT /api/orders/:id/cancel
+// @access  Private
+const cancelMyOrder = async (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: 'ID đơn hàng không hợp lệ' });
+    }
+
+    const existingOrder = await Order.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    });
+
+    if (!existingOrder) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng của bạn' });
+    }
+    if (existingOrder.orderStatus !== 'Pending') {
+      return res.status(409).json({
+        success: false,
+        message: 'Chỉ có thể hủy đơn hàng đang chờ xử lý',
+      });
+    }
+    if (existingOrder.isPaid) {
+      return res.status(409).json({
+        success: false,
+        message: 'Đơn hàng đã thanh toán. Vui lòng liên hệ cửa hàng để được hỗ trợ hoàn tiền',
+      });
+    }
+
+    // Cập nhật có điều kiện để hai yêu cầu hủy đồng thời không hoàn kho hai lần.
+    const cancelledOrder = await Order.findOneAndUpdate(
+      {
+        _id: existingOrder._id,
+        user: req.user._id,
+        orderStatus: 'Pending',
+        isPaid: false,
+      },
+      { $set: { orderStatus: 'Cancelled' } },
+      { new: true, runValidators: true }
+    );
+
+    if (!cancelledOrder) {
+      return res.status(409).json({
+        success: false,
+        message: 'Đơn hàng vừa thay đổi trạng thái, không thể hủy',
+      });
+    }
+
+    // Hoàn lại tồn kho sau khi đơn được chuyển trạng thái thành công.
+    if (cancelledOrder.orderItems.length > 0) {
+      await Product.bulkWrite(
+        cancelledOrder.orderItems.map((item) => ({
+          updateOne: {
+            filter: { _id: item.product },
+            update: { $inc: { countInStock: item.qty } },
+          },
+        }))
+      );
+    }
+
+    res.json({
+      success: true,
+      message: 'Hủy đơn hàng thành công',
+      data: cancelledOrder,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // @desc    Lấy toàn bộ đơn hàng (Dành cho Admin)
 // @route   GET /api/orders
 // @access  Private/Admin
@@ -269,6 +356,7 @@ const updateOrderStatus = async (req, res, next) => {
 module.exports = {
   createOrder,
   getMyOrders,
+  cancelMyOrder,
   getAllOrders,
   updateOrderStatus,
 };

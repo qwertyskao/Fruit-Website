@@ -20,6 +20,7 @@ const productSchema = new mongoose.Schema(
     discountPrice: {
       type: Number,
       default: 0,
+      min: [0, 'Giá khuyến mãi không được âm'],
     },
     description: {
       type: String,

@@ -3,16 +3,18 @@ const router = express.Router();
 const {
   createOrder,
   getMyOrders,
+  cancelMyOrder,
   getAllOrders,
   updateOrderStatus,
 } = require('../controllers/orderController');
-const { protect, admin } = require('../middlewares/authMiddleware');
+const { protect, optionalProtect, admin } = require('../middlewares/authMiddleware');
 
-// Khách hàng đặt hàng (có thể đăng nhập hoặc khách vãng lai)
-router.post('/', createOrder);
+// Khách có thể đặt hàng không cần đăng nhập; token hợp lệ sẽ gắn user vào đơn.
+router.post('/', optionalProtect, createOrder);
 
 // Khách hàng đã đăng nhập xem lịch sử đơn hàng của mình
 router.get('/myorders', protect, getMyOrders);
+router.put('/:id/cancel', protect, cancelMyOrder);
 
 // Admin quản lý toàn bộ đơn hàng
 router.get('/', protect, admin, getAllOrders);
