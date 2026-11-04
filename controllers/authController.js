@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { isNonEmptyString, isValidEmail } = require('../utils/validation');
 
 // Hàm tạo JWT token
 const generateToken = (id) => {
@@ -14,6 +15,16 @@ const generateToken = (id) => {
 const registerUser = async (req, res, next) => {
   try {
     const { name, email, password, phone, address } = req.body;
+
+    if (!isNonEmptyString(name)) {
+      return res.status(400).json({ success: false, message: 'Họ tên không được để trống' });
+    }
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ success: false, message: 'Email không đúng định dạng' });
+    }
+    if (typeof password !== 'string' || password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Mật khẩu phải có ít nhất 6 ký tự' });
+    }
 
     // Kiểm tra email tồn tại chưa
     const userExists = await User.findOne({ email });
@@ -53,7 +64,10 @@ const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    if (!email || !password) {
+    if (!isValidEmail(email)) {
+      return res.status(400).json({ success: false, message: 'Email không đúng định dạng' });
+    }
+    if (typeof password !== 'string' || !password) {
       return res.status(400).json({ success: false, message: 'Vui lòng cung cấp email và mật khẩu' });
     }
 
