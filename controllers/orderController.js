@@ -245,6 +245,77 @@ const getMyOrders = async (req, res, next) => {
   }
 };
 
+// @desc    Khách hàng hủy đơn đang chờ xử lý
+// @route   PUT /api/orders/:id/cancel
+// @access  Private
+const cancelMyOrder = async (req, res, next) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(400).json({ success: false, message: 'ID đơn hàng không hợp lệ' });
+    }
+
+    const existingOrder = await Order.findOne({
+      _id: req.params.id,
+      user: req.user._id,
+    });
+
+    if (!existingOrder) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy đơn hàng của bạn' });
+    }
+    if (existingOrder.orderStatus !== 'Pending') {
+      return res.status(409).json({
+        success: false,
+        message: 'Chỉ có thể hủy đơn hàng đang chờ xử lý',
+      });
+    }
+    if (existingOrder.isPaid) {
+      return res.status(409).json({
+        success: false,
+        message: 'Đơn hàng đã thanh toán. Vui lòng liên hệ cửa hàng để được hỗ trợ hoàn tiền',
+      });
+    }
+
+    // Cập nhật có điều kiện để hai yêu cầu hủy đồng thời không hoàn kho hai lần.
+    const cancelledOrder = await Order.findOneAndUpdate(
+      {
+        _id: existingOrder._id,
+        user: req.user._id,
+        orderStatus: 'Pending',
+        isPaid: false,
+      },
+      { $set: { orderStatus: 'Cancelled' } },
+      { new: true, runValidators: true }
+    );
+
+    if (!cancelledOrder) {
+      return res.status(409).json({
+        success: false,
+        message: 'Đơn hàng vừa thay đổi trạng thái, không thể hủy',
+      });
+    }
+
+    // Hoàn lại tồn kho sau khi đơn được chuyển trạng thái thành công.
+    if (cancelledOrder.orderItems.length > 0) {
+      await Product.bulkWrite(
+        cancelledOrder.orderItems.map((item) => ({
+          updateOne: {
+            filter: { _id: item.product },
+            update: { $inc: { countInStock: item.qty } },
+          },
+        }))
+      );
+    }
+
+    res.json({
+      success: true,
+      message: 'Hủy đơn hàng thành công',
+      data: cancelledOrder,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // @desc    Lấy toàn bộ đơn hàng (Dành cho Admin)
 // @route   GET /api/orders
 // @access  Private/Admin
@@ -285,6 +356,7 @@ const updateOrderStatus = async (req, res, next) => {
 module.exports = {
   createOrder,
   getMyOrders,
+  cancelMyOrder,
   getAllOrders,
   updateOrderStatus,
 };
