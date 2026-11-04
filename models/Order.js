@@ -28,7 +28,7 @@ const orderSchema = new mongoose.Schema(
         required: true,
         trim: true,
         lowercase: true,
-      match: [/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/, 'Email không đúng định dạng'],
+        match: [/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/, 'Email không đúng định dạng'],
       },
       address: { type: String, required: true },
       city: { type: String, default: '' },
