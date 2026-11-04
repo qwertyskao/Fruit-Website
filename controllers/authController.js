@@ -94,6 +94,42 @@ const loginUser = async (req, res, next) => {
   }
 };
 
+// @desc    Đổi mật khẩu người dùng hiện tại
+// @route   PUT /api/auth/change-password
+// @access  Private
+const changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (typeof currentPassword !== 'string' || !currentPassword) {
+      return res.status(400).json({ success: false, message: 'Vui lòng nhập mật khẩu hiện tại' });
+    }
+    if (typeof newPassword !== 'string' || newPassword.length < 6) {
+      return res.status(400).json({ success: false, message: 'Mật khẩu mới phải có ít nhất 6 ký tự' });
+    }
+    if (currentPassword === newPassword) {
+      return res.status(400).json({ success: false, message: 'Mật khẩu mới phải khác mật khẩu hiện tại' });
+    }
+
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'Không tìm thấy tài khoản' });
+    }
+
+    const isCurrentPasswordCorrect = await user.matchPassword(currentPassword);
+    if (!isCurrentPasswordCorrect) {
+      return res.status(401).json({ success: false, message: 'Mật khẩu hiện tại không chính xác' });
+    }
+
+    user.password = newPassword;
+    await user.save();
+
+    res.json({ success: true, message: 'Đổi mật khẩu thành công' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // @desc    Lấy thông tin tài khoản hiện tại
 // @route   GET /api/auth/profile
 // @access  Private
@@ -110,4 +146,5 @@ module.exports = {
   registerUser,
   loginUser,
   getUserProfile,
+  changePassword,
 };

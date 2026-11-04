@@ -3,6 +3,7 @@ const router = express.Router();
 const {
   createOrder,
   getMyOrders,
+  cancelMyOrder,
   getAllOrders,
   updateOrderStatus,
 } = require('../controllers/orderController');
@@ -13,6 +14,7 @@ router.post('/', optionalProtect, createOrder);
 
 // Khách hàng đã đăng nhập xem lịch sử đơn hàng của mình
 router.get('/myorders', protect, getMyOrders);
+router.put('/:id/cancel', protect, cancelMyOrder);
 
 // Admin quản lý toàn bộ đơn hàng
 router.get('/', protect, admin, getAllOrders);
