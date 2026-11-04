@@ -7,10 +7,32 @@ const sendEmail = require('../utils/sendMail');
 const FREE_SHIPPING_THRESHOLD = 300000;
 const STANDARD_SHIPPING_FEE = 30000;
 
+// Hoàn lại số lượng đã giữ nếu tạo đơn thất bại.
+const restoreReservedStock = async (reservedItems) => {
+  for (const item of [...reservedItems].reverse()) {
+    try {
+      await Product.updateOne(
+        { _id: item.productId },
+        { $inc: { countInStock: item.qty } }
+      );
+    } catch (rollbackError) {
+      // Ghi log để có thể xử lý tồn kho thủ công nếu thao tác hoàn kho gặp lỗi.
+      console.error(
+        `❌ Không thể hoàn ${item.qty} sản phẩm ${item.productId} về kho:`,
+        rollbackError
+      );
+    }
+  }
+  reservedItems.length = 0;
+};
+
 // @desc    Tạo đơn hàng mới & Gửi email xác nhận
 // @route   POST /api/orders
 // @access  Public (hoặc Private nếu có token)
 const createOrder = async (req, res, next) => {
+  // Lưu lại các lần trừ kho thành công để hoàn lại nếu bước sau thất bại.
+  const reservedStock = [];
+
   try {
     const { orderItems: requestedItems, shippingAddress, paymentMethod } = req.body;
 
@@ -35,7 +57,22 @@ const createOrder = async (req, res, next) => {
       normalizedItems.push({ productId, qty });
     }
 
-    const productIds = [...new Set(normalizedItems.map((item) => item.productId))];
+    // Gộp các dòng trùng sản phẩm để tránh trừ kho nhiều lần không cần thiết.
+    const quantitiesByProduct = new Map();
+    for (const item of normalizedItems) {
+      const key = item.productId.toString();
+      const combinedQty = (quantitiesByProduct.get(key) || 0) + item.qty;
+      if (!Number.isSafeInteger(combinedQty)) {
+        return res.status(400).json({ success: false, message: 'Số lượng sản phẩm vượt giới hạn' });
+      }
+      quantitiesByProduct.set(key, combinedQty);
+    }
+
+    const requestedProducts = [...quantitiesByProduct.entries()].map(([productId, qty]) => ({
+      productId,
+      qty,
+    }));
+    const productIds = requestedProducts.map((item) => item.productId);
     const products = await Product.find({ _id: { $in: productIds } });
     const productsById = new Map(products.map((product) => [product._id.toString(), product]));
 
@@ -44,8 +81,8 @@ const createOrder = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Một hoặc nhiều sản phẩm không tồn tại' });
     }
 
-    const calculatedOrderItems = normalizedItems.map(({ productId, qty }) => {
-      const product = productsById.get(productId.toString());
+    const calculatedOrderItems = requestedProducts.map(({ productId, qty }) => {
+      const product = productsById.get(productId);
       const unitPrice = product.discountPrice > 0 ? product.discountPrice : product.price;
 
       if (!Number.isFinite(unitPrice) || unitPrice < 0) {
@@ -81,7 +118,34 @@ const createOrder = async (req, res, next) => {
       totalPrice,
     });
 
+    // Trừ kho bằng cập nhật có điều kiện và nguyên tử:
+    // MongoDB chỉ trừ khi tồn kho hiện tại vẫn >= số lượng cần mua.
+    // Nếu hai khách cùng mua món cuối, chỉ một câu lệnh có thể thành công.
+    for (const item of calculatedOrderItems) {
+      const stockUpdate = await Product.updateOne(
+        {
+          _id: item.product,
+          countInStock: { $gte: item.qty },
+        },
+        {
+          $inc: { countInStock: -item.qty },
+        }
+      );
+
+      if (stockUpdate.modifiedCount !== 1) {
+        const stockError = new Error(
+          `Sản phẩm "${item.name}" không đủ số lượng tồn kho. Vui lòng cập nhật giỏ hàng.`
+        );
+        stockError.statusCode = 409;
+        throw stockError;
+      }
+
+      reservedStock.push({ productId: item.product, qty: item.qty });
+    }
+
+    // Chỉ tạo đơn sau khi đã giữ đủ tồn kho cho tất cả sản phẩm.
     const createdOrder = await order.save();
+    // Đơn hàng đã được lưu, không hoàn kho khi gửi email thất bại.
 
     // Tự động gửi email xác nhận đặt hàng nếu người mua có email
     if (shippingAddress && shippingAddress.email) {
@@ -137,6 +201,18 @@ const createOrder = async (req, res, next) => {
       data: createdOrder,
     });
   } catch (error) {
+    // Nếu có sản phẩm đã trừ kho nhưng đơn hàng không được tạo, hoàn lại kho.
+    if (reservedStock.length > 0) {
+      await restoreReservedStock(reservedStock);
+    }
+
+    if (error.statusCode === 409) {
+      return res.status(409).json({
+        success: false,
+        message: error.message,
+      });
+    }
+
     next(error);
   }
 };
