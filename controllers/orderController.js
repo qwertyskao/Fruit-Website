@@ -51,6 +51,7 @@ const createOrder = async (req, res, next) => {
     if (!isValidEmail(shippingAddress.email)) {
       return res.status(400).json({ success: false, message: 'Email người nhận không đúng định dạng' });
     }
+    shippingAddress.email = shippingAddress.email.trim().toLowerCase();
     if (!isNonEmptyString(shippingAddress.phone) || !isNonEmptyString(shippingAddress.address)) {
       return res.status(400).json({ success: false, message: 'Vui lòng nhập số điện thoại và địa chỉ giao hàng' });
     }
