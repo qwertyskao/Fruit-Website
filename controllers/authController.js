@@ -26,8 +26,10 @@ const registerUser = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Mật khẩu phải có ít nhất 6 ký tự' });
     }
 
+    const normalizedEmail = email.trim().toLowerCase();
+
     // Kiểm tra email tồn tại chưa
-    const userExists = await User.findOne({ email });
+    const userExists = await User.findOne({ email: normalizedEmail });
     if (userExists) {
       return res.status(400).json({ success: false, message: 'Email này đã được sử dụng' });
     }
@@ -35,7 +37,7 @@ const registerUser = async (req, res, next) => {
     // Tạo user mới
     const user = await User.create({
       name,
-      email,
+      email: normalizedEmail,
       password,
       phone,
       address,
@@ -71,7 +73,7 @@ const loginUser = async (req, res, next) => {
       return res.status(400).json({ success: false, message: 'Vui lòng cung cấp email và mật khẩu' });
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email: email.trim().toLowerCase() });
     if (user && (await user.matchPassword(password))) {
       res.json({
         success: true,
