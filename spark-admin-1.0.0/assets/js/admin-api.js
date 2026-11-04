@@ -504,26 +504,26 @@ const admin = {
           saveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang lưu...';
         }
 
-        const formData = new FormData();
-        formData.append('name', document.getElementById('pName').value.trim());
-        formData.append('category', document.getElementById('pCategory').value);
-        formData.append('price', document.getElementById('pPrice').value);
-        formData.append('discountPrice', document.getElementById('pDiscountPrice').value || '0');
-        formData.append('countInStock', document.getElementById('pStock').value || '0');
-        formData.append('unit', document.getElementById('pUnit').value);
-        formData.append('description', document.getElementById('pDescription').value.trim());
-        formData.append('isFeatured', document.getElementById('pIsFeatured')?.checked ? 'true' : 'false');
-        Array.from(document.getElementById('pImage').files || []).forEach((file) => {
-          formData.append('images', file);
-        });
+        const payload = {
+          name: document.getElementById('pName').value.trim(),
+          category: document.getElementById('pCategory').value,
+          price: Number(document.getElementById('pPrice').value),
+          discountPrice: Number(document.getElementById('pDiscountPrice').value || 0),
+          countInStock: Number(document.getElementById('pStock').value || 0),
+          unit: document.getElementById('pUnit').value,
+          imageUrl: document.getElementById('pImage').value.trim() || '/fruitables-1.0.0/img/fruite-item-5.jpg',
+          description: document.getElementById('pDescription').value.trim(),
+          isFeatured: document.getElementById('pIsFeatured') ? document.getElementById('pIsFeatured').checked : true,
+        };
 
         try {
           const res = await fetch(`${API_BASE}/products`, {
             method: 'POST',
             headers: {
+              'Content-Type': 'application/json',
               Authorization: `Bearer ${this.getToken()}`,
             },
-            body: formData,
+            body: JSON.stringify(payload),
           });
 
           const json = await res.json();
@@ -565,26 +565,26 @@ const admin = {
         }
 
         const featCheckbox = document.getElementById('editPIsFeatured');
-        const formData = new FormData();
-        formData.append('name', document.getElementById('editPName').value.trim());
-        formData.append('category', document.getElementById('editPCategory').value);
-        formData.append('price', document.getElementById('editPPrice').value);
-        formData.append('discountPrice', document.getElementById('editPDiscountPrice').value || '0');
-        formData.append('countInStock', document.getElementById('editPStock').value || '0');
-        formData.append('unit', document.getElementById('editPUnit').value);
-        formData.append('description', document.getElementById('editPDescription').value.trim());
-        formData.append('isFeatured', featCheckbox?.checked ? 'true' : 'false');
-        Array.from(document.getElementById('editPImage').files || []).forEach((file) => {
-          formData.append('images', file);
-        });
+        const payload = {
+          name: document.getElementById('editPName').value.trim(),
+          category: document.getElementById('editPCategory').value,
+          price: Number(document.getElementById('editPPrice').value),
+          discountPrice: Number(document.getElementById('editPDiscountPrice').value || 0),
+          countInStock: Number(document.getElementById('editPStock').value || 0),
+          unit: document.getElementById('editPUnit').value,
+          imageUrl: document.getElementById('editPImage').value.trim(),
+          description: document.getElementById('editPDescription').value.trim(),
+          isFeatured: featCheckbox ? featCheckbox.checked : true,
+        };
 
         try {
           const res = await fetch(`${API_BASE}/products/${id}`, {
             method: 'PUT',
             headers: {
+              'Content-Type': 'application/json',
               Authorization: `Bearer ${this.getToken()}`,
             },
-            body: formData,
+            body: JSON.stringify(payload),
           });
 
           const json = await res.json();
@@ -653,6 +653,7 @@ const admin = {
       unitSelect.value = product.unit;
     }
 
+    document.getElementById('editPImage').value = (product.images && product.images[0]) || '';
     document.getElementById('editPDescription').value = product.description || '';
 
     const featCheckbox = document.getElementById('editPIsFeatured');
