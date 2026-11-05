@@ -74,9 +74,12 @@ const getProducts = async (req, res, next) => {
         });
       }
 
+      const sortOptions = { 'newest': { createdAt: -1, _id: -1 }, 'price-asc': { price: 1, _id: 1 }, 'price-desc': { price: -1, _id: -1 }, 'name-asc': { name: 1, _id: 1 } };
+      const sortOrder = sortOptions[req.query.sort || 'newest'];
+      if (!sortOrder) return res.status(400).json({ success: false, message: 'Kiểu sắp xếp không hợp lệ' });
       const [products, totalProducts] = await Promise.all([
         Product.find(query)
-          .sort({ createdAt: -1, _id: -1 })
+          .sort(sortOrder)
           .skip(skip)
           .limit(limit)
           .populate('category', 'name'),
